@@ -1,12 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
 import CTAButton from "@/components/CTAButton";
 
 export default function Header() {
   const [activeSection, setActiveSection] = useState('home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  const { scrollYProgress } = useScroll();
+  const headerBackground = useTransform(
+    scrollYProgress,
+    [0, 0.1],
+    ["rgba(var(--background-rgb), 0.8)", "rgba(var(--background-rgb), 0.95)"]
+  );
+  const logoScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.9]);
 
   const navItems = [
     { label: "About", href: "#about" },
@@ -21,13 +32,17 @@ export default function Header() {
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+      setIsMenuOpen(false);
     }
   };
 
   useEffect(() => {
     const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+      
       const sections = ['home', 'about', 'services', 'case-studies', 'testimonials', 'careers', 'contact'];
-      const scrollPosition = window.scrollY + 100;
+      const scrollPos = scrollPosition + 100;
 
       for (const section of sections) {
         const element = document.getElementById(section);
@@ -35,7 +50,7 @@ export default function Header() {
           const offsetTop = element.offsetTop;
           const offsetBottom = offsetTop + element.offsetHeight;
           
-          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+          if (scrollPos >= offsetTop && scrollPos < offsetBottom) {
             setActiveSection(section);
             break;
           }
@@ -48,77 +63,214 @@ export default function Header() {
   }, []);
 
   return (
-    <motion.header 
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="fixed top-0 left-0 right-0 z-50 border-b border-border-subtle backdrop-blur-xl supports-[backdrop-filter]:bg-background/80"
-    >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Link 
-            href="#home" 
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToSection('#home');
-            }}
-            className="flex items-center space-x-3 group"
+    <>
+      {/* Scroll progress indicator */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-brand-accent to-brand-secondary origin-left z-50"
+        style={{ scaleX: scrollYProgress }}
+      />
+      
+      <motion.header 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        style={{ backgroundColor: headerBackground }}
+        className={`
+          fixed top-0 left-0 right-0 z-40 border-b backdrop-blur-xl supports-[backdrop-filter]:bg-background/80
+          transition-all duration-300 pt-1
+          ${isScrolled 
+            ? 'border-border-subtle shadow-lg shadow-black/5' 
+            : 'border-transparent'
+          }
+        `}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          {/* Logo with enhanced animations */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            style={{ scale: logoScale }}
           >
-            {/* Logo/Lettermark */}
-            <div className="w-10 h-10 bg-gradient-to-br from-brand-primary via-brand-accent to-brand-secondary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/25 group-hover:shadow-brand-primary/40 transition-all duration-300">
-              <span className="text-white font-bold text-lg">Q</span>
-            </div>
-            <span className="font-display text-xl font-semibold bg-gradient-to-r from-brand-primary to-brand-accent bg-clip-text text-transparent group-hover:from-brand-accent group-hover:to-brand-secondary transition-all duration-300">
-              Quantex
-            </span>
-          </Link>
-        </motion.div>
-        
-        <nav className="hidden lg:flex items-center gap-8">
-          {navItems.map((item, index) => {
-            const sectionId = item.href.replace('#', '');
-            const isActive = activeSection === sectionId;
-            
-            return (
-              <motion.button
-                key={item.label}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                onClick={() => scrollToSection(item.href)}
-                className={`text-sm font-medium transition-all duration-300 relative group ${
-                  isActive 
-                    ? 'text-brand-primary' 
-                    : 'text-text-muted hover:text-text-primary'
-                }`}
+            <Link 
+              href="#home" 
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('#home');
+              }}
+              className="flex items-center space-x-3 group"
+            >
+              <motion.div 
+                className="w-10 h-10 bg-gradient-to-br from-brand-primary via-brand-accent to-brand-secondary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/25 relative overflow-hidden"
+                whileHover={{ 
+                  scale: 1.05,
+                  rotate: [0, -2, 2, 0],
+                  boxShadow: "0 8px 25px rgba(var(--brand-primary-rgb), 0.4)"
+                }}
+                transition={{ duration: 0.3 }}
               >
-                {item.label}
-                <span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-brand-primary to-brand-accent transition-all duration-300 ${
-                  isActive ? 'w-full' : 'w-0 group-hover:w-full'
-                }`} />
-              </motion.button>
-            );
-          })}
-        </nav>
+                {/* Shimmer effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                />
+                <span className="text-white font-bold text-lg relative z-10">Q</span>
+              </motion.div>
+              
+              <motion.span 
+                className="font-display text-xl font-semibold bg-gradient-to-r from-brand-primary to-brand-accent bg-clip-text text-transparent"
+                whileHover={{
+                  backgroundImage: "linear-gradient(to right, var(--brand-accent), var(--brand-secondary))"
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                Quantex
+              </motion.span>
+            </Link>
+          </motion.div>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-8">
+            {navItems.map((item, index) => {
+              const sectionId = item.href.replace('#', '');
+              const isActive = activeSection === sectionId;
+              
+              return (
+                <motion.button
+                  key={item.label}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 * index }}
+                  onClick={() => scrollToSection(item.href)}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ y: 0 }}
+                  className={`
+                    text-sm font-medium relative group px-3 py-2 rounded-lg
+                    transition-all duration-300 transform-gpu
+                    ${isActive 
+                      ? 'text-brand-primary bg-brand-primary/5' 
+                      : 'text-text-muted hover:text-text-primary hover:bg-background-card'
+                    }
+                  `}
+                >
+                  {item.label}
+                  
+                  {/* Enhanced active indicator */}
+                  <motion.span 
+                    className={`
+                      absolute -bottom-1 left-1/2 h-0.5 bg-gradient-to-r from-brand-primary to-brand-accent rounded-full
+                      ${isActive ? 'w-6' : 'w-0 group-hover:w-6'}
+                    `}
+                    style={{ x: '-50%' }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  />
+                  
+                  {/* Hover glow effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-brand-primary/5 rounded-lg opacity-0"
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                </motion.button>
+              );
+            })}
+          </nav>
 
+          {/* Right side actions */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex items-center gap-4"
+          >
+            {/* Desktop CTA */}
+            <div className="hidden md:block">
+              <CTAButton 
+                label="Get Started" 
+                onClick={() => scrollToSection('#contact')}
+                size="md"
+              />
+            </div>
+
+            {/* Mobile menu button */}
+            <motion.button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="lg:hidden p-2 text-text-muted hover:text-text-primary hover:bg-background-card rounded-lg transition-all duration-200"
+            >
+              <motion.div
+                initial={false}
+                animate={{ rotate: isMenuOpen ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </motion.div>
+            </motion.button>
+          </motion.div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex items-center gap-4"
+          initial={false}
+          animate={{ 
+            height: isMenuOpen ? "auto" : 0,
+            opacity: isMenuOpen ? 1 : 0
+          }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="lg:hidden overflow-hidden border-t border-border-subtle bg-background/95 backdrop-blur-xl"
         >
-          <div className="hidden md:block">
-            <CTAButton 
-              label="Get Started" 
-              onClick={() => scrollToSection('#contact')}
-            />
+          <div className="px-6 py-4 space-y-2">
+            {navItems.map((item, index) => {
+              const sectionId = item.href.replace('#', '');
+              const isActive = activeSection === sectionId;
+              
+              return (
+                <motion.button
+                  key={item.label}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ 
+                    opacity: isMenuOpen ? 1 : 0, 
+                    x: isMenuOpen ? 0 : -20 
+                  }}
+                  transition={{ duration: 0.3, delay: isMenuOpen ? index * 0.1 : 0 }}
+                  onClick={() => scrollToSection(item.href)}
+                  className={`
+                    w-full text-left px-4 py-3 rounded-xl font-medium
+                    transition-all duration-200 transform-gpu
+                    ${isActive 
+                      ? 'text-brand-primary bg-brand-primary/10 border border-brand-primary/20' 
+                      : 'text-text-muted hover:text-text-primary hover:bg-background-card'
+                    }
+                  `}
+                >
+                  {item.label}
+                </motion.button>
+              );
+            })}
+            
+            {/* Mobile CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ 
+                opacity: isMenuOpen ? 1 : 0, 
+                y: isMenuOpen ? 0 : 20 
+              }}
+              transition={{ duration: 0.3, delay: isMenuOpen ? 0.6 : 0 }}
+              className="pt-4 border-t border-border-subtle"
+            >
+              <CTAButton 
+                label="Get Started" 
+                onClick={() => scrollToSection('#contact')}
+                size="md"
+                variant="primary"
+              />
+            </motion.div>
           </div>
         </motion.div>
-      </div>
-    </motion.header>
+      </motion.header>
+    </>
   );
 }

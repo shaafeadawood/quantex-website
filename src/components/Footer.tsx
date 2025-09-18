@@ -1,21 +1,77 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Linkedin, Twitter, Github, Mail, Heart } from "lucide-react";
+import { Linkedin, Instagram, Facebook, Mail, Heart } from "lucide-react";
+
+interface FooterLink {
+  name: string;
+  href: string;
+  label?: string;
+  external?: boolean;
+}
 
 export default function Footer() {
-  const footerLinks = {
-    "Company": ["About", "Careers", "News", "Contact"],
-    "Services": ["AI Innovation", "Intelligent Systems", "Digital Transformation", "Consulting"],
-    "Resources": ["Case Studies", "Blog", "Documentation", "Support"],
-    "Legal": ["Privacy Policy", "Terms of Service", "Cookie Policy", "Security"]
+  const footerLinks: Record<string, FooterLink[]> = {
+    "Company": [
+      { name: "About", href: "#about" },
+      { name: "Careers", href: "#careers" },
+      { name: "News", href: "#testimonials", label: "News & Updates" },
+      { name: "Contact", href: "#contact" }
+    ],
+    "Services": [
+      { name: "AI Innovation", href: "#services" },
+      { name: "Intelligent Systems", href: "#services" },
+      { name: "Digital Transformation", href: "#services" },
+      { name: "Consulting", href: "#services" }
+    ],
+    "Resources": [
+      { name: "Case Studies", href: "#case-studies" },
+      { name: "Blog", href: "#testimonials", label: "Blog & Insights" },
+      { name: "Documentation", href: "#services", label: "Technical Docs" },
+      { name: "Support", href: "#contact", label: "Get Support" }
+    ],
+    "Legal": [
+      { name: "Privacy Policy", href: "#", external: true },
+      { name: "Terms of Service", href: "#", external: true },
+      { name: "Cookie Policy", href: "#", external: true },
+      { name: "Security", href: "#about", label: "Security & Trust" }
+    ]
+  };
+
+  const scrollToSection = (href: string) => {
+    if (href === "#") return; // For external/placeholder links
+    
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const socialLinks = [
-    { name: "LinkedIn", icon: Linkedin },
-    { name: "Twitter", icon: Twitter },
-    { name: "GitHub", icon: Github },
-    { name: "Email", icon: Mail }
+    { 
+      name: "Instagram", 
+      icon: Instagram, 
+      url: "http://bit.ly/46dZ7Lz",
+      color: "hover:text-pink-500"
+    },
+    { 
+      name: "Facebook", 
+      icon: Facebook, 
+      url: "http://bit.ly/4mRNcK9",
+      color: "hover:text-blue-500"
+    },
+    { 
+      name: "LinkedIn", 
+      icon: Linkedin, 
+      url: "https://bit.ly/46m0Ijv",
+      color: "hover:text-blue-600"
+    },
+    { 
+      name: "Email", 
+      icon: Mail, 
+      url: "mailto:contact.quantex@gmail.com",
+      color: "hover:text-green-500"
+    }
   ];
 
   return (
@@ -30,17 +86,33 @@ export default function Footer() {
             <p className="text-text-muted leading-relaxed max-w-md">
               Pioneering AI innovation and intelligent systems to transform businesses and unlock human potential through cutting-edge technology.
             </p>
+            <div className="space-y-2">
+              <div className="text-sm text-text-muted">
+                Get in touch:
+              </div>
+              <motion.a
+                href="mailto:contact.quantex@gmail.com"
+                whileHover={{ scale: 1.02 }}
+                className="inline-flex items-center gap-2 text-brand-primary hover:text-brand-accent transition-colors duration-200 font-medium"
+              >
+                <Mail className="w-4 h-4" />
+                contact.quantex@gmail.com
+              </motion.a>
+            </div>
             <div className="flex space-x-4">
               {socialLinks.map((social) => (
-                <motion.button
+                <motion.a
                   key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ y: -2, scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="w-10 h-10 bg-white/5 hover:bg-brand-primary/20 rounded-lg flex items-center justify-center text-text-muted hover:text-brand-primary transition-colors"
-                  aria-label={social.name}
+                  className={`w-10 h-10 bg-white/5 hover:bg-brand-primary/20 rounded-lg flex items-center justify-center text-text-muted ${social.color} transition-all duration-300 group`}
+                  aria-label={`Visit our ${social.name}`}
                 >
-                  <social.icon className="w-5 h-5" strokeWidth={1.5} />
-                </motion.button>
+                  <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" strokeWidth={1.5} />
+                </motion.a>
               ))}
             </div>
           </div>
@@ -51,9 +123,16 @@ export default function Footer() {
               <h3 className="font-display text-text-primary font-semibold">{category}</h3>
               <ul className="space-y-3">
                 {links.map((link) => (
-                  <li key={link}>
-                    <button className="text-text-muted hover:text-text-primary transition-colors text-sm">
-                      {link}
+                  <li key={link.name}>
+                    <button 
+                      onClick={() => scrollToSection(link.href)}
+                      className="text-text-muted hover:text-brand-primary transition-colors text-sm text-left hover:underline decoration-brand-primary/50 underline-offset-2"
+                      disabled={link.href === "#"}
+                    >
+                      {link.label || link.name}
+                      {link.external && (
+                        <span className="text-xs text-text-muted/70 ml-1">(Coming Soon)</span>
+                      )}
                     </button>
                   </li>
                 ))}
