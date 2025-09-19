@@ -51,19 +51,19 @@ export default function Footer() {
     { 
       name: "Instagram", 
       icon: Instagram, 
-      url: "http://bit.ly/46dZ7Lz",
+      url: "https://www.instagram.com/quantex_limited?utm_source=qr&igsh=cms5NmU0ZThycWZl",
       color: "hover:text-pink-500"
     },
     { 
       name: "Facebook", 
       icon: Facebook, 
-      url: "http://bit.ly/4mRNcK9",
+      url: "https://www.facebook.com/profile.php?id=61580656340438&mibextid=ZbWKwL",
       color: "hover:text-blue-500"
     },
     { 
       name: "LinkedIn", 
       icon: Linkedin, 
-      url: "https://bit.ly/46m0Ijv",
+      url: "https://www.linkedin.com/company/quantexltd/",
       color: "hover:text-blue-600"
     },
     { 

@@ -14,6 +14,8 @@ export default function ContactForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'company' | 'message', string>>>({});
+  const [generalError, setGeneralError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -26,10 +28,28 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
+    setSubmitStatus('idle');
+    setFieldErrors({});
+  setGeneralError(null);
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+  const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        if (data?.errors) {
+          setFieldErrors(data.errors);
+          if (data.errors.general) setGeneralError(data.errors.general);
+        }
+        setSubmitStatus('error');
+        return;
+      }
+
       setSubmitStatus('success');
       setFormData({ name: '', email: '', company: '', message: '' });
     } catch {
@@ -39,17 +59,10 @@ export default function ContactForm() {
     }
   };
 
+  // Only animate scale; use CSS classes for border colors to avoid animating CSS variables
   const inputVariants = {
-    focused: { 
-      scale: 1.02, 
-      boxShadow: "0 0 0 3px rgba(var(--brand-primary-rgb), 0.1)",
-      borderColor: "rgb(var(--brand-primary))"
-    },
-    unfocused: { 
-      scale: 1, 
-      boxShadow: "0 0 0 0px rgba(var(--brand-primary-rgb), 0)",
-      borderColor: "rgba(255, 255, 255, 0.1)"
-    }
+    focused: { scale: 1.02 },
+    unfocused: { scale: 1 },
   };
 
   const formFields = [
@@ -161,7 +174,7 @@ export default function ContactForm() {
                       variants={inputVariants}
                       animate={focusedField === field.name ? 'focused' : 'unfocused'}
                       transition={{ duration: 0.2 }}
-                      className="w-full px-4 py-4 rounded-xl bg-background-subtle/50 backdrop-blur-sm border border-border-subtle text-text-primary placeholder-text-muted focus:outline-none transition-all duration-200"
+                      className={`w-full px-4 py-4 rounded-xl bg-background-subtle/50 backdrop-blur-sm border ${fieldErrors[field.name as 'name' | 'email' | 'company' | 'message'] ? 'border-red-500/50' : focusedField === field.name ? 'border-brand-primary' : 'border-border-subtle'} text-text-primary placeholder-text-muted focus:outline-none transition-colors duration-200`}
                       placeholder={field.placeholder}
                     />
                     
@@ -173,6 +186,12 @@ export default function ContactForm() {
                       }}
                       transition={{ duration: 0.2 }}
                     />
+                    {fieldErrors[field.name as 'name' | 'email' | 'company' | 'message'] && (
+                      <div className="mt-2 text-sm text-red-400 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4" />
+                        {fieldErrors[field.name as 'name' | 'email' | 'company' | 'message']}
+                      </div>
+                    )}
                   </motion.div>
                 </motion.div>
               ))}
@@ -200,9 +219,15 @@ export default function ContactForm() {
                   variants={inputVariants}
                   animate={focusedField === 'message' ? 'focused' : 'unfocused'}
                   transition={{ duration: 0.2 }}
-                  className="w-full px-4 py-4 rounded-xl bg-background-subtle/50 backdrop-blur-sm border border-border-subtle text-text-primary placeholder-text-muted focus:outline-none resize-none transition-all duration-200"
+                  className={`w-full px-4 py-4 rounded-xl bg-background-subtle/50 backdrop-blur-sm border ${fieldErrors.message ? 'border-red-500/50' : focusedField === 'message' ? 'border-brand-primary' : 'border-border-subtle'} text-text-primary placeholder-text-muted focus:outline-none resize-none transition-colors duration-200`}
                   placeholder="Tell us about your project, goals, and how we can help transform your business with AI solutions..."
                 />
+              {fieldErrors.message && (
+                <div className="mt-2 text-sm text-red-400 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {fieldErrors.message}
+                </div>
+              )}
                 
                 {/* Focus indicator */}
                 <motion.div
@@ -257,7 +282,9 @@ export default function ContactForm() {
                   <AlertCircle className="w-5 h-5 flex-shrink-0" />
                   <div>
                     <div className="font-medium">Failed to send message</div>
-                    <div className="text-sm opacity-80">Please try again or contact us directly.</div>
+                    <div className="text-sm opacity-80">
+                      {generalError ? generalError : 'Please try again or contact us directly.'}
+                    </div>
                   </div>
                 </motion.div>
               )}

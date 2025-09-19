@@ -16,6 +16,22 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Contact form setup (email)
+
+To enable the Contact form to send emails:
+
+1. Create a Resend account and generate an API key: https://resend.com
+2. Copy `.env.example` to `.env.local` and fill in the variables:
+
+   - `RESEND_API_KEY` — your Resend API key
+   - `CONTACT_TO_EMAIL` — the destination inbox where you want to receive messages
+
+3. (Optional) Update the `from` domain in `src/app/api/contact/route.ts` once you verify your own domain in Resend.
+
+4. Restart the dev server after adding the env file.
+
+The API route lives at `/api/contact` and performs server-side validation. The frontend form displays inline field errors and a success state when the message is delivered.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
