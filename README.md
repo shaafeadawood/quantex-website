@@ -1,52 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Quantex Website
+
+A polished, modern marketing site for Quantex built with Next.js App Router, TypeScript, Tailwind CSS, and Framer Motion. It features smooth section navigation, production-ready contact email workflow, and professional legal pages.
+
+### Tech
+
+- Next.js 15 (App Router) + TypeScript
+- Tailwind CSS + custom theme tokens
+- Framer Motion for tasteful micro-interactions
+- Resend for transactional emails (contact form)
 
 ## Getting Started
 
-First, run the development server:
+Run the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser.
+
+Build for production:
+
+```bash
+npm run build && npm start
+```
 
 ## Contact form setup (email)
 
-To enable the Contact form to send emails:
+The site sends contact messages via Resend using a server API with robust validation.
 
 1. Create a Resend account and generate an API key: https://resend.com
-2. Copy `.env.example` to `.env.local` and fill in the variables:
-
+2. Copy `.env.example` to `.env.local` and set:
    - `RESEND_API_KEY` — your Resend API key
-   - `CONTACT_TO_EMAIL` — the destination inbox where you want to receive messages
+   - `CONTACT_TO_EMAIL` — where to receive form submissions
+3. (Optional) After verifying your domain in Resend, adjust the `from` address in `src/app/api/contact/route.ts`.
+4. Restart the dev server.
 
-3. (Optional) Update the `from` domain in `src/app/api/contact/route.ts` once you verify your own domain in Resend.
+Server endpoint: `POST /api/contact`
+Client form: `src/components/ContactForm.tsx`
 
-4. Restart the dev server after adding the env file.
+## Navigation behavior
 
-The API route lives at `/api/contact` and performs server-side validation. The frontend form displays inline field errors and a success state when the message is delivered.
+Header and footer links to sections (e.g., About, Services) are hash links. They behave as follows:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- From the homepage: smooth-scroll to the section (e.g., `#services`).
+- From other routes: navigate to `/#section` first, then the browser shows that section.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Routes and redirects
 
-## Learn More
+Public pages:
 
-To learn more about Next.js, take a look at the following resources:
+- `/` — Homepage with sections: `#home`, `#about`, `#services`, `#case-studies`, `#testimonials`, `#careers`, `#contact`
+- `/privacy`, `/terms`, `/security` — Legal pages with SEO metadata
+- `/api/contact` — Server endpoint for contact form
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Legacy routes redirect to their homepage sections (to avoid 404s and keep deep links working):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `/about` → `/#about`
+- `/case-studies` → `/#case-studies`
+- `/careers` → `/#careers`
+- `/contact` → `/#contact`
 
-## Deploy on Vercel
+## Project structure (high-level)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+   app/
+      api/contact/route.ts     # Resend email endpoint with validation
+      privacy/page.tsx         # Privacy Policy (styled TSX)
+      terms/page.tsx           # Terms of Service (styled TSX)
+      security/page.tsx        # Security & Trust (styled TSX)
+      page.tsx                 # Homepage assembling sections
+   components/
+      Header.tsx, Footer.tsx   # Global nav with cross-route hash navigation
+      ContactForm.tsx          # Client form calling /api/contact
+      Accordion.tsx            # FAQ accordion used on legal pages
+      sections/*               # Home sections (About, Services, Case Studies, etc.)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Editing legal pages
+
+Legal content lives in TSX files under `src/app/{privacy|terms|security}/page.tsx`. Update company details, effective dates, or sections directly in those files; no Markdown renderer is used.
+
+## License
+
+MIT — see `LICENSE`.

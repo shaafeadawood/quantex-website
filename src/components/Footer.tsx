@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Linkedin, Instagram, Facebook, Mail, Heart } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 interface FooterLink {
   name: string;
@@ -11,40 +12,40 @@ interface FooterLink {
 }
 
 export default function Footer() {
+  const pathname = usePathname();
+  const router = useRouter();
   const footerLinks: Record<string, FooterLink[]> = {
     "Company": [
       { name: "About", href: "#about" },
       { name: "Careers", href: "#careers" },
-      { name: "News", href: "#testimonials", label: "News & Updates" },
       { name: "Contact", href: "#contact" }
     ],
     "Services": [
       { name: "AI Innovation", href: "#services" },
       { name: "Intelligent Systems", href: "#services" },
-      { name: "Digital Transformation", href: "#services" },
       { name: "Consulting", href: "#services" }
     ],
     "Resources": [
       { name: "Case Studies", href: "#case-studies" },
       { name: "Blog", href: "#testimonials", label: "Blog & Insights" },
-      { name: "Documentation", href: "#services", label: "Technical Docs" },
       { name: "Support", href: "#contact", label: "Get Support" }
     ],
     "Legal": [
-      { name: "Privacy Policy", href: "#", external: true },
-      { name: "Terms of Service", href: "#", external: true },
-      { name: "Cookie Policy", href: "#", external: true },
-      { name: "Security", href: "#about", label: "Security & Trust" }
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Terms", href: "/terms" },
+      { name: "Security & Trust", href: "/security" }
     ]
   };
 
-  const scrollToSection = (href: string) => {
-    if (href === "#") return; // For external/placeholder links
-    
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const isHashLink = (href: string) => href.startsWith('#');
+  const handleHashNav = (href: string) => {
+    if (pathname !== "/") {
+      router.push(`/${href}`);
+      return;
     }
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    else router.push(href);
   };
 
   const socialLinks = [
@@ -124,16 +125,21 @@ export default function Footer() {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.name}>
-                    <button 
-                      onClick={() => scrollToSection(link.href)}
-                      className="text-text-muted hover:text-brand-primary transition-colors text-sm text-left hover:underline decoration-brand-primary/50 underline-offset-2"
-                      disabled={link.href === "#"}
-                    >
-                      {link.label || link.name}
-                      {link.external && (
-                        <span className="text-xs text-text-muted/70 ml-1">(Coming Soon)</span>
-                      )}
-                    </button>
+                    {isHashLink(link.href) ? (
+                      <button
+                        onClick={() => handleHashNav(link.href)}
+                        className="text-text-muted hover:text-brand-primary transition-colors text-sm text-left hover:underline decoration-brand-primary/50 underline-offset-2"
+                      >
+                        {link.label || link.name}
+                      </button>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-text-muted hover:text-brand-primary transition-colors text-sm text-left hover:underline decoration-brand-primary/50 underline-offset-2"
+                      >
+                        {link.label || link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

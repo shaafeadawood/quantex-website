@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import CTAButton from "@/components/CTAButton";
-import { Users, Briefcase, Target, MapPin, Clock } from "lucide-react";
+import { Users, Briefcase, Target, MapPin } from "lucide-react";
 
 export default function CareersSection() {
   const ref = useRef(null);

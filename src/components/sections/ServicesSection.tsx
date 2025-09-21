@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Cpu, Cloud, Zap, Target, GraduationCap } from "lucide-react";
+import { Cloud, Zap, Target, GraduationCap } from "lucide-react";
 
 const services = [
   {

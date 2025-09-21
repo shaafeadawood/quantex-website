@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import CTAButton from "@/components/CTAButton";
 
 export default function Header() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [activeSection, setActiveSection] = useState('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,7 +21,8 @@ export default function Header() {
     [0, 0.1],
     ["rgba(var(--background-rgb), 0.8)", "rgba(var(--background-rgb), 0.95)"]
   );
-  const logoScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.9]);
+  // Keep the logo full-size on scroll for maximum readability
+  const logoScale = useTransform(scrollYProgress, [0, 0.1], [1, 1]);
 
   const navItems = [
     { label: "About", href: "#about" },
@@ -29,10 +34,21 @@ export default function Header() {
   ];
 
   const scrollToSection = (href: string) => {
+    // If we are not on the homepage, navigate to '/#section' first.
+    if (pathname !== "/") {
+      router.push(`/${href}`); // href already includes '#'
+      setIsMenuOpen(false);
+      return;
+    }
+
+    // On the homepage, smooth-scroll to the target element.
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
       setIsMenuOpen(false);
+    } else {
+      // Fallback: ensure hash updates to allow native jump if element renders later.
+      router.push(href);
     }
   };
 
@@ -84,50 +100,38 @@ export default function Header() {
           }
         `}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo with enhanced animations */}
+  <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             style={{ scale: logoScale }}
           >
-            <Link 
-              href="#home" 
+            <Link
+              href="/"
+              aria-label="Go to homepage"
               onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('#home');
+                // If already on the homepage, smooth-scroll to #home. Otherwise, jump to /#home.
+                if (pathname === "/") {
+                  e.preventDefault();
+                  scrollToSection('#home');
+                } else {
+                  e.preventDefault();
+                  router.push('/#home');
+                }
               }}
-              className="flex items-center space-x-3 group"
+              className="flex items-center gap-3 shrink-0"
             >
-              <motion.div 
-                className="w-10 h-10 bg-gradient-to-br from-brand-primary via-brand-accent to-brand-secondary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/25 relative overflow-hidden"
-                whileHover={{ 
-                  scale: 1.05,
-                  rotate: [0, -2, 2, 0],
-                  boxShadow: "0 8px 25px rgba(var(--brand-primary-rgb), 0.4)"
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                {/* Shimmer effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
-                  initial={{ x: "-100%" }}
-                  whileHover={{ x: "100%" }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
-                />
-                <span className="text-white font-bold text-lg relative z-10">Q</span>
-              </motion.div>
-              
-              <motion.span 
-                className="font-display text-xl font-semibold bg-gradient-to-r from-brand-primary to-brand-accent bg-clip-text text-transparent"
-                whileHover={{
-                  backgroundImage: "linear-gradient(to right, var(--brand-accent), var(--brand-secondary))"
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                Quantex
-              </motion.span>
+              <Image
+                src="/logo (3).png"
+                alt="Quantex logo"
+                width={400}
+                height={120}
+                priority
+                sizes="(min-width: 1536px) 168px, (min-width: 1024px) 144px, 120px"
+                className="block h-10 lg:h-12 2xl:h-14 w-auto object-contain"
+              />
             </Link>
           </motion.div>
           
