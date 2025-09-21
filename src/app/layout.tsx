@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
 import PageTransition from "@/components/PageTransition";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ScrollProvider, ScrollProgressIndicator } from "@/components/ScrollProvider";
+import { LoadingProvider } from "@/components/LoadingProvider";
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -18,7 +20,11 @@ export const metadata: Metadata = {
   description: "Pioneering AI innovation and intelligent systems to transform businesses and unlock human potential through cutting-edge technology.",
   keywords: "AI, artificial intelligence, machine learning, intelligent systems, automation, digital transformation",
   authors: [{ name: "Quantex Ltd." }],
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#030712" }
@@ -34,11 +40,20 @@ export default function RootLayout({
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider>
-          <MotionProvider>
-            <Header />
-            <PageTransition>{children}</PageTransition>
-            <Footer />
-          </MotionProvider>
+          <LoadingProvider>
+            <ScrollProvider>
+              <MotionProvider>
+                <div className="min-h-screen flex flex-col">
+                  <ScrollProgressIndicator />
+                  <Header />
+                  <main className="flex-1">
+                    <PageTransition>{children}</PageTransition>
+                  </main>
+                  <Footer />
+                </div>
+              </MotionProvider>
+            </ScrollProvider>
+          </LoadingProvider>
         </ThemeProvider>
       </body>
     </html>

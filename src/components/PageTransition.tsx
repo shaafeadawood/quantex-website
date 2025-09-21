@@ -1,93 +1,13 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-
-// Enhanced loading component
-const LoadingScreen = () => (
-  <motion.div
-    initial={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    transition={{ duration: 0.5, ease: "easeInOut" }}
-    className="fixed inset-0 z-[100] bg-white dark:bg-gray-950 flex items-center justify-center"
-  >
-    {/* Main logo animation */}
-    <div className="text-center space-y-6">
-      <motion.div
-        className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-600 via-primary-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25"
-        animate={{
-          scale: [1, 1.1, 1],
-          rotate: [0, 5, 0],
-          boxShadow: [
-            "0 10px 25px rgba(24, 0, 173, 0.25)",
-            "0 20px 40px rgba(24, 0, 173, 0.4)",
-            "0 10px 25px rgba(24, 0, 173, 0.25)"
-          ]
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      >
-        <span className="text-white font-bold text-3xl">Q</span>
-      </motion.div>
-      
-      {/* Loading text */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="space-y-2"
-      >
-        <h3 className="font-display text-xl font-semibold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
-          Quantex
-        </h3>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">Initializing AI Experience...</p>
-      </motion.div>
-
-      {/* Loading progress bar */}
-      <motion.div className="w-48 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-        <motion.div
-          className="h-full bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600"
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 2, ease: "easeInOut" }}
-        />
-      </motion.div>
-    </div>
-
-    {/* Floating particles */}
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-primary-600/30 rounded-full"
-          style={{
-            left: `${20 + i * 15}%`,
-            top: `${30 + Math.sin(i) * 40}%`,
-          }}
-          animate={{
-            y: [-10, -30, -10],
-            opacity: [0.3, 0.8, 0.3],
-            scale: [0.8, 1.2, 0.8],
-          }}
-          transition={{
-            duration: 3 + i * 0.5,
-            repeat: Infinity,
-            delay: i * 0.3,
-            ease: "easeInOut"
-          }}
-        />
-      ))}
-    </div>
-  </motion.div>
-);
+import { PageTransitionLoader } from "./GlobalLoader";
 
 // Skeleton loader component for sections
 export const SectionSkeleton = ({ className = "" }: { className?: string }) => (
-  <div className={`animate-pulse space-y-6 ${className}`}>
+  <div className={`animate-pulse space-y-6 ${className}`} role="status" aria-label="Loading content">
     <div className="text-center space-y-4">
       <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-32 mx-auto"></div>
       <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-lg w-96 max-w-full mx-auto"></div>
@@ -111,22 +31,24 @@ export const SectionSkeleton = ({ className = "" }: { className?: string }) => (
 // Enhanced page transition with loading states
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
+  // Page transition handling - minimal for navigation
   useEffect(() => {
-    // Simulate loading time (in real app, this would be based on actual content loading)
+    setIsPageTransitioning(true);
     const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+      setIsPageTransitioning(false);
+    }, 400); // Fast transitions only for navigation
 
     return () => clearTimeout(timer);
   }, [pathname]);
 
   const pageVariants = {
     initial: { 
-      opacity: 0, 
-      y: 20,
-      scale: 0.98 
+      opacity: 1, // Start visible
+      y: 0,
+      scale: 1 
     },
     in: { 
       opacity: 1, 
@@ -134,23 +56,25 @@ export default function PageTransition({ children }: { children: React.ReactNode
       scale: 1 
     },
     out: { 
-      opacity: 0, 
-      y: -20,
-      scale: 1.02 
+      opacity: shouldReduceMotion ? 1 : 0, 
+      y: shouldReduceMotion ? 0 : -10,
+      scale: shouldReduceMotion ? 1 : 1.02 
     }
   };
 
   const pageTransition = {
     type: "tween" as const,
-    ease: "anticipate" as const,
-    duration: 0.6
+    ease: [0.4, 0, 0.2, 1] as const,
+    duration: shouldReduceMotion ? 0.1 : 0.3 // Quick transitions
   };
 
   return (
-    <AnimatePresence mode="wait">
-      {isLoading ? (
-        <LoadingScreen key="loading" />
-      ) : (
+    <>
+      {/* Page transition loader - only for navigation */}
+      <PageTransitionLoader isVisible={isPageTransitioning} />
+      
+      {/* Page content - starts immediately visible */}
+      <AnimatePresence mode="wait">
         <motion.div
           key={pathname}
           initial="initial"
@@ -159,10 +83,13 @@ export default function PageTransition({ children }: { children: React.ReactNode
           variants={pageVariants}
           transition={pageTransition}
           className="min-h-screen"
+          role="main"
+          aria-live="polite"
+          aria-busy={isPageTransitioning}
         >
           {children}
         </motion.div>
-      )}
-    </AnimatePresence>
+      </AnimatePresence>
+    </>
   );
 }

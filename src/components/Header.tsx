@@ -83,18 +83,15 @@ export default function Header() {
     <>
       {/* Scroll progress indicator */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-primary origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-primary origin-left z-[100]"
         style={{ scaleX: scrollYProgress }}
       />
       
-      <motion.header 
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+      <header 
         style={{ backgroundColor: headerBackground }}
         className={`
-          fixed top-0 left-0 right-0 z-40 border-b backdrop-blur-xl
-          transition-all duration-300 pt-1
+          fixed top-0 left-0 right-0 z-[90] border-b backdrop-blur-xl
+          transition-all duration-300 pt-1 !important
           ${isScrolled 
             ? 'border-border-subtle shadow-lg shadow-black/5' 
             : 'border-transparent'
@@ -103,12 +100,7 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            style={{ scale: logoScale }}
-          >
+          <div>
             <Link
               href="/"
               aria-label="Go to homepage"
@@ -134,7 +126,7 @@ export default function Header() {
                 className="block h-10 lg:h-12 2xl:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105"
               />
             </Link>
-          </motion.div>
+          </div>
           
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
@@ -184,10 +176,7 @@ export default function Header() {
           </nav>
 
           {/* Right side actions */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+          <div
             className="flex items-center gap-4"
           >
             {/* Theme Toggle */}
@@ -217,7 +206,7 @@ export default function Header() {
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </motion.div>
             </motion.button>
-          </motion.div>
+          </div>
         </div>
 
         {/* Mobile Navigation Menu */}
@@ -278,7 +267,7 @@ export default function Header() {
             </motion.div>
           </div>
         </motion.div>
-      </motion.header>
+      </header>
     </>
   );
 }

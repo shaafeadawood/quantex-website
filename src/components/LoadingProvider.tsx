@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 interface LoadingContextType {
   isLoading: boolean;
@@ -20,104 +20,93 @@ export const useLoading = () => {
   return context;
 };
 
-// Global loading overlay
-const LoadingOverlay = ({ isVisible, text }: { isVisible: boolean; text: string }) => (
-  <AnimatePresence>
-    {isVisible && (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[200] bg-background/80 backdrop-blur-sm flex items-center justify-center"
-      >
+// Global loading overlay - Clean professional version
+const LoadingOverlay = ({ isVisible }: { isVisible: boolean }) => {
+  const shouldReduceMotion = useReducedMotion();
+  
+  return (
+    <AnimatePresence>
+      {isVisible && (
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.8, opacity: 0 }}
-          transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
-          className="bg-background-card border border-border-subtle rounded-2xl p-8 shadow-xl max-w-sm mx-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: shouldReduceMotion ? 0.1 : 0.3 }}
+          className="fixed inset-0 z-[200] bg-background/95 backdrop-blur-md flex items-center justify-center"
+          role="status"
+          aria-busy="true"
+          aria-label="Loading content"
         >
-          <div className="text-center space-y-4">
-            {/* Animated logo */}
+          <motion.div
+            initial={{ scale: shouldReduceMotion ? 1 : 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: shouldReduceMotion ? 1 : 0.9, opacity: 0 }}
+            transition={{ 
+              duration: shouldReduceMotion ? 0.1 : 0.3, 
+              type: "spring", 
+              stiffness: 400, 
+              damping: 30 
+            }}
+            className="text-center"
+          >
+            {/* Clean logo animation */}
             <motion.div
-              className="w-16 h-16 mx-auto bg-gradient-to-br from-brand-primary via-brand-accent to-brand-secondary rounded-2xl flex items-center justify-center"
-              animate={{
-                rotate: [0, 360],
-                scale: [1, 1.1, 1]
+              className="w-16 h-16 mx-auto bg-gradient-to-br from-[#1800ad] to-[#6366f1] rounded-2xl flex items-center justify-center shadow-lg"
+              animate={shouldReduceMotion ? {} : {
+                scale: [1, 1.05, 1],
+                boxShadow: [
+                  "0 8px 25px rgba(24, 0, 173, 0.15)",
+                  "0 12px 35px rgba(24, 0, 173, 0.25)",
+                  "0 8px 25px rgba(24, 0, 173, 0.15)"
+                ]
               }}
               transition={{
-                duration: 2,
-                repeat: Infinity,
+                duration: shouldReduceMotion ? 0 : 2,
+                repeat: shouldReduceMotion ? 0 : Infinity,
                 ease: "easeInOut"
               }}
             >
               <span className="text-white font-bold text-xl">Q</span>
             </motion.div>
 
-            {/* Loading text */}
-            <div className="space-y-2">
-              <motion.h3
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="font-semibold text-text-primary"
-              >
-                {text}
-              </motion.h3>
-              
-              {/* Animated dots */}
+            {/* Simple loading indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: shouldReduceMotion ? 0 : 0.3 }}
+              className="mt-6"
+            >
               <div className="flex justify-center space-x-1">
                 {[...Array(3)].map((_, i) => (
                   <motion.div
                     key={i}
-                    className="w-2 h-2 bg-brand-primary rounded-full"
-                    animate={{
-                      scale: [1, 1.5, 1],
+                    className="w-2 h-2 bg-[#1800ad] rounded-full"
+                    animate={shouldReduceMotion ? {} : {
+                      scale: [1, 1.3, 1],
                       opacity: [0.5, 1, 0.5]
                     }}
                     transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                      delay: i * 0.2,
+                      duration: shouldReduceMotion ? 0 : 1.2,
+                      repeat: shouldReduceMotion ? 0 : Infinity,
+                      delay: shouldReduceMotion ? 0 : i * 0.2,
                       ease: "easeInOut"
                     }}
                   />
                 ))}
               </div>
-            </div>
-
-            {/* Progress bar */}
-            <div className="w-full h-1 bg-background-subtle rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-brand-primary via-brand-accent to-brand-secondary"
-                animate={{
-                  x: ["-100%", "100%"]
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
+      )}
+    </AnimatePresence>
+  );
+};
 
 export const LoadingProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState("Loading...");
 
   const setLoading = (loading: boolean) => {
     setIsLoading(loading);
-  };
-
-  const setLoadingTextState = (text: string) => {
-    setLoadingText(text);
   };
 
   // Prevent body scroll when loading
@@ -138,22 +127,21 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
       value={{
         isLoading,
         setLoading,
-        loadingText,
-        setLoadingText: setLoadingTextState,
+        loadingText: "", // Deprecated - keeping for compatibility
+        setLoadingText: () => {}, // Deprecated - keeping for compatibility
       }}
     >
       {children}
-      <LoadingOverlay isVisible={isLoading} text={loadingText} />
+      <LoadingOverlay isVisible={isLoading} />
     </LoadingContext.Provider>
   );
 };
 
 // Hook for easy loading management
 export const useLoadingState = () => {
-  const { setLoading, setLoadingText } = useLoading();
+  const { setLoading } = useLoading();
 
-  const showLoading = (text = "Loading...") => {
-    setLoadingText(text);
+  const showLoading = () => {
     setLoading(true);
   };
 
