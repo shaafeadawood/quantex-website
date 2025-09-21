@@ -76,25 +76,30 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-background-subtle border-t border-white/10">
+    <footer className="bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="font-display text-2xl bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
+            <motion.div 
+              className="font-display text-2xl bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent"
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            >
               Quantex
-            </div>
-            <p className="text-text-muted leading-relaxed max-w-md">
+            </motion.div>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed max-w-md">
               Pioneering AI innovation and intelligent systems to transform businesses and unlock human potential through cutting-edge technology.
             </p>
             <div className="space-y-2">
-              <div className="text-sm text-text-muted">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
                 Get in touch:
               </div>
               <motion.a
                 href="mailto:contact.quantex@gmail.com"
                 whileHover={{ scale: 1.02 }}
-                className="inline-flex items-center gap-2 text-brand-primary hover:text-brand-accent transition-colors duration-200 font-medium"
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
               >
                 <Mail className="w-4 h-4" />
                 contact.quantex@gmail.com
@@ -107,9 +112,10 @@ export default function Footer() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ y: -2, scale: 1.1 }}
+                  whileHover={{ y: -3, scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className={`w-10 h-10 bg-white/5 hover:bg-brand-primary/20 rounded-lg flex items-center justify-center text-text-muted ${social.color} transition-all duration-300 group`}
+                  className="w-10 h-10 bg-gray-100 hover:bg-primary-100 dark:bg-gray-800 dark:hover:bg-primary-900/30 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 group shadow-sm hover:shadow-md hover:shadow-primary-500/25"
                   aria-label={`Visit our ${social.name}`}
                 >
                   <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" strokeWidth={1.5} />
@@ -121,24 +127,26 @@ export default function Footer() {
           {/* Links Sections */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category} className="space-y-4">
-              <h3 className="font-display text-text-primary font-semibold">{category}</h3>
+              <h3 className="font-display text-gray-900 dark:text-white font-semibold">{category}</h3>
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.name}>
                     {isHashLink(link.href) ? (
-                      <button
+                      <motion.button
                         onClick={() => handleHashNav(link.href)}
-                        className="text-text-muted hover:text-brand-primary transition-colors text-sm text-left hover:underline decoration-brand-primary/50 underline-offset-2"
+                        whileHover={{ x: 2 }}
+                        className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm text-left hover:underline decoration-primary-500/50 underline-offset-2"
                       >
                         {link.label || link.name}
-                      </button>
+                      </motion.button>
                     ) : (
-                      <a
+                      <motion.a
                         href={link.href}
-                        className="text-text-muted hover:text-brand-primary transition-colors text-sm text-left hover:underline decoration-brand-primary/50 underline-offset-2"
+                        whileHover={{ x: 2 }}
+                        className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm text-left hover:underline decoration-primary-500/50 underline-offset-2"
                       >
                         {link.label || link.name}
-                      </a>
+                      </motion.a>
                     )}
                   </li>
                 ))}
@@ -148,16 +156,24 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-white/10 mt-12 pt-8 flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
-          <div className="text-sm text-text-muted">
+        <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             © {new Date().getFullYear()} Quantex Ltd. All rights reserved.
           </div>
-          <div className="flex items-center space-x-6 text-sm text-text-muted">
-            <span className="flex items-center space-x-1">
+          <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400">
+            <motion.span 
+              className="flex items-center space-x-1"
+              whileHover={{ scale: 1.02 }}
+            >
               <span>Built with</span>
-              <Heart className="w-4 h-4 text-red-500" strokeWidth={1.5} fill="currentColor" />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Heart className="w-4 h-4 text-red-500" strokeWidth={1.5} fill="currentColor" />
+              </motion.div>
               <span>using Next.js & AI</span>
-            </span>
+            </motion.span>
           </div>
         </div>
       </div>

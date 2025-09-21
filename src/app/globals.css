@@ -1,71 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Base styles with CSS custom properties for theme switching */
+:root {
+  /* Light theme (default) */
+  --background: 255 255 255;
+  --background-subtle: 249 250 251;
+  --background-card: 255 255 255;
+  --background-elevated: 249 250 251;
+  --text-primary: 17 24 39;
+  --text-secondary: 107 114 128;
+  --text-muted: 156 163 175;
+  --text-subtle: 209 213 219;
+  --text-inverse: 249 250 251;
+  --border-subtle: 229 231 235, 0.6;
+  --surface-glass: 255 255 255, 0.8;
+  --surface-glass-strong: 255 255 255, 0.95;
+  
+  color-scheme: light;
+}
+
+.dark {
+  /* Dark theme */
+  --background: 3 7 18;
+  --background-subtle: 17 24 39;
+  --background-card: 31 41 55;
+  --background-elevated: 55 65 81;
+  --text-primary: 249 250 251;
+  --text-secondary: 156 163 175;
+  --text-muted: 107 114 128;
+  --text-subtle: 75 85 99;
+  --text-inverse: 17 24 39;
+  --border-subtle: 55 65 81, 0.3;
+  --surface-glass: 255 255 255, 0.05;
+  --surface-glass-strong: 255 255 255, 0.1;
+  
+  color-scheme: dark;
+}
 
 /* Enhanced typography system */
 @layer base {
   html {
     @apply scroll-smooth;
-    /* Better font rendering */
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-feature-settings: "cv03", "cv04", "cv11";
-    /* Mobile optimization */
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
-    /* Ensure proper zoom behavior on mobile */
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
   }
 
   body {
-    @apply font-sans text-text-primary bg-background antialiased;
-    /* Better line heights and spacing */
+    @apply antialiased;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: rgb(var(--text-primary));
+    background-color: rgb(var(--background));
     line-height: 1.6;
     letter-spacing: -0.01em;
-    /* Smooth scrolling physics on mobile */
     overscroll-behavior: contain;
-    /* Prevent horizontal overflow */
     overflow-x: hidden;
-    /* Mobile-friendly touch scrolling */
     -webkit-overflow-scrolling: touch;
+    min-height: 100vh;
+    transition: color 300ms ease, background-color 300ms ease;
   }
 
-  /* Enhanced heading typography */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.2;
     letter-spacing: -0.02em;
     font-feature-settings: "ss01", "cv03", "cv04";
-    /* Better text wrapping on mobile */
     word-wrap: break-word;
     hyphens: auto;
   }
 
-  /* Improved paragraph spacing */
   p {
     line-height: 1.75;
     hanging-punctuation: first last;
   }
 
-  /* Better focus indicators */
   *:focus-visible {
-    @apply outline-none ring-2 ring-brand-primary/50 ring-offset-2 ring-offset-background;
+    @apply outline-none;
+    box-shadow: 0 0 0 2px #1800ad, 0 0 0 4px rgba(24, 0, 173, 0.2);
     border-radius: 0.5rem;
   }
 
-  /* Mobile-friendly button touches */
   button, [role="button"] {
     @apply touch-manipulation;
-    min-height: 44px; /* iOS recommended touch target */
+    min-height: 44px;
     min-width: 44px;
   }
 
-  /* Enhanced input accessibility */
   input, textarea, select {
     @apply touch-manipulation;
-    min-height: 44px; /* Better mobile touch targets */
+    min-height: 44px;
   }
 }
 

@@ -11,28 +11,28 @@ const services = [
     description: "Transform your business vision into actionable AI roadmaps with expert strategic guidance and implementation planning.",
     icon: Target,
     features: ["Strategic Planning", "Technology Assessment", "ROI Analysis", "Implementation Roadmap"],
-    gradient: "from-brand-primary to-brand-accent"
+    gradient: "from-primary-600 to-primary-400"
   },
   {
     title: "Custom AI Development",
     description: "Build intelligent systems tailored to your unique challenges with cutting-edge machine learning and automation.",
     icon: Zap,
     features: ["Machine Learning Models", "Process Automation", "Predictive Analytics", "Custom Algorithms"],
-    gradient: "from-brand-accent to-brand-secondary"
+    gradient: "from-primary-500 to-purple-500"
   },
   {
     title: "Digital Transformation",
     description: "Modernize your operations with intelligent workflows, cloud integration, and scalable technology solutions.",
     icon: Cloud,
     features: ["Cloud Migration", "Workflow Optimization", "System Integration", "Performance Monitoring"],
-    gradient: "from-brand-secondary to-brand-primary"
+    gradient: "from-purple-500 to-primary-600"
   },
   {
     title: "AI Training & Support",
     description: "Empower your team with comprehensive AI knowledge and ongoing technical support for sustained success.",
     icon: GraduationCap,
     features: ["Team Training", "Best Practices", "24/7 Support", "Knowledge Transfer"],
-    gradient: "from-brand-primary via-brand-accent to-brand-secondary"
+    gradient: "from-primary-600 via-primary-500 to-purple-600"
   }
 ];
 
@@ -41,7 +41,7 @@ export default function ServicesSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="services" className="py-20 lg:py-32 bg-background-subtle">
+    <section id="services" className="py-20 lg:py-32 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="w-full max-w-7xl mx-auto px-6" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -53,20 +53,20 @@ export default function ServicesSection() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary/10 backdrop-blur-sm border border-brand-primary/20 rounded-full text-sm text-brand-primary font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 dark:bg-primary-900/30 backdrop-blur-sm border border-primary-200 dark:border-primary-800 rounded-full text-sm text-primary-700 dark:text-primary-300 font-medium"
           >
-            <span className="w-2 h-2 bg-brand-primary rounded-full"></span>
+            <span className="w-2 h-2 bg-primary-600 rounded-full"></span>
             Our Services
           </motion.div>
           
-          <h2 className="font-display text-4xl lg:text-5xl xl:text-6xl text-text-primary leading-tight">
+          <h2 className="font-display text-4xl lg:text-5xl xl:text-6xl text-gray-900 dark:text-white leading-tight">
             Intelligent Solutions for{" "}
-            <span className="bg-gradient-to-r from-brand-primary via-brand-accent to-brand-secondary bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-purple-600 bg-clip-text text-transparent">
               Every Challenge
             </span>
           </h2>
           
-          <p className="text-lg lg:text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
             From strategic planning to hands-on implementation, we deliver comprehensive AI solutions 
             that drive measurable business outcomes and sustainable growth.
           </p>
@@ -81,7 +81,7 @@ export default function ServicesSection() {
               transition={{ duration: 0.8, delay: 0.4 + index * 0.2 }}
               className="group"
             >
-              <div className="relative h-full p-8 bg-background-card border border-border-subtle rounded-2xl transition-all duration-500 hover:border-brand-primary/30 hover:shadow-xl hover:shadow-brand-primary/10 hover:-translate-y-2">
+              <div className="relative h-full p-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl transition-all duration-500 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-xl hover:shadow-primary-500/25 dark:hover:shadow-primary-500/10 hover:-translate-y-2">
                 {/* Gradient overlay on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-500`}></div>
                 
@@ -97,16 +97,16 @@ export default function ServicesSection() {
                 </div>
 
                 <div className="relative space-y-4">
-                  <h3 className="text-2xl font-bold text-text-primary group-hover:text-brand-primary transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
                     {service.title}
                   </h3>
                   
-                  <p className="text-text-secondary leading-relaxed">
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                     {service.description}
                   </p>
 
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-text-accent uppercase tracking-wide">
+                    <h4 className="text-sm font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-wide">
                       Key Features
                     </h4>
                     <ul className="grid grid-cols-2 gap-2">
@@ -116,9 +116,9 @@ export default function ServicesSection() {
                           initial={{ opacity: 0, x: -20 }}
                           animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
                           transition={{ duration: 0.5, delay: 0.8 + index * 0.2 + featureIndex * 0.1 }}
-                          className="flex items-center gap-3 text-sm text-text-muted"
+                          className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400"
                         >
-                          <div className="w-1.5 h-1.5 bg-brand-primary rounded-full flex-shrink-0"></div>
+                          <div className="w-1.5 h-1.5 bg-primary-600 rounded-full flex-shrink-0"></div>
                           {feature}
                         </motion.li>
                       ))}
@@ -130,7 +130,7 @@ export default function ServicesSection() {
                     initial={{ opacity: 0, x: -10 }}
                     whileHover={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="flex items-center gap-2 text-brand-primary font-medium pt-4 opacity-0 group-hover:opacity-100"
+                    className="flex items-center gap-2 text-primary-600 dark:text-primary-400 font-medium pt-4 opacity-0 group-hover:opacity-100"
                   >
                     Learn More
                     <motion.span
@@ -153,12 +153,12 @@ export default function ServicesSection() {
           transition={{ duration: 0.8, delay: 1.2 }}
           className="text-center mt-16"
         >
-          <div className="inline-flex flex-col sm:flex-row items-center gap-6 p-8 bg-gradient-to-r from-brand-primary/5 via-brand-accent/5 to-brand-secondary/5 border border-brand-primary/20 rounded-2xl backdrop-blur-sm">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-6 p-8 bg-gradient-to-r from-primary-50 via-primary-100 to-purple-50 dark:from-primary-900/20 dark:via-primary-800/20 dark:to-purple-900/20 border border-primary-200 dark:border-primary-800 rounded-2xl backdrop-blur-sm">
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-text-primary">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                 Ready to transform your business?
               </h3>
-              <p className="text-text-secondary">
+              <p className="text-gray-600 dark:text-gray-300">
                 Let&apos;s discuss how our AI solutions can drive your success.
               </p>
             </div>
@@ -171,7 +171,7 @@ export default function ServicesSection() {
                   element.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="px-8 py-3 bg-gradient-to-r from-brand-primary to-brand-accent text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-brand-primary/25 transition-all duration-300 whitespace-nowrap"
+              className="px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all duration-300 whitespace-nowrap"
             >
               Get Started Today
             </motion.button>

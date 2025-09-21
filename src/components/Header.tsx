@@ -7,6 +7,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import CTAButton from "@/components/CTAButton";
+import { SimpleThemeToggle } from "@/components/ThemeToggle";
 
 export default function Header() {
   const pathname = usePathname();
@@ -19,7 +20,7 @@ export default function Header() {
   const headerBackground = useTransform(
     scrollYProgress,
     [0, 0.1],
-    ["rgba(var(--background-rgb), 0.8)", "rgba(var(--background-rgb), 0.95)"]
+    ["rgba(var(--background), 0.8)", "rgba(var(--background), 0.95)"]
   );
   // Keep the logo full-size on scroll for maximum readability
   const logoScale = useTransform(scrollYProgress, [0, 0.1], [1, 1]);
@@ -82,7 +83,7 @@ export default function Header() {
     <>
       {/* Scroll progress indicator */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-brand-accent to-brand-secondary origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-primary origin-left z-50"
         style={{ scaleX: scrollYProgress }}
       />
       
@@ -92,7 +93,7 @@ export default function Header() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         style={{ backgroundColor: headerBackground }}
         className={`
-          fixed top-0 left-0 right-0 z-40 border-b backdrop-blur-xl supports-[backdrop-filter]:bg-background/80
+          fixed top-0 left-0 right-0 z-40 border-b backdrop-blur-xl
           transition-all duration-300 pt-1
           ${isScrolled 
             ? 'border-border-subtle shadow-lg shadow-black/5' 
@@ -100,7 +101,7 @@ export default function Header() {
           }
         `}
       >
-  <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -130,7 +131,7 @@ export default function Header() {
                 height={120}
                 priority
                 sizes="(min-width: 1536px) 168px, (min-width: 1024px) 144px, 120px"
-                className="block h-10 lg:h-12 2xl:h-14 w-auto object-contain"
+                className="block h-10 lg:h-12 2xl:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105"
               />
             </Link>
           </motion.div>
@@ -154,7 +155,7 @@ export default function Header() {
                     text-sm font-medium relative group px-3 py-2 rounded-lg
                     transition-all duration-300 transform-gpu
                     ${isActive 
-                      ? 'text-brand-primary bg-brand-primary/5' 
+                      ? 'text-primary-900 bg-gradient-surface' 
                       : 'text-text-muted hover:text-text-primary hover:bg-background-card'
                     }
                   `}
@@ -164,7 +165,7 @@ export default function Header() {
                   {/* Enhanced active indicator */}
                   <motion.span 
                     className={`
-                      absolute -bottom-1 left-1/2 h-0.5 bg-gradient-to-r from-brand-primary to-brand-accent rounded-full
+                      absolute -bottom-1 left-1/2 h-0.5 bg-gradient-primary rounded-full
                       ${isActive ? 'w-6' : 'w-0 group-hover:w-6'}
                     `}
                     style={{ x: '-50%' }}
@@ -173,7 +174,7 @@ export default function Header() {
                   
                   {/* Hover glow effect */}
                   <motion.div
-                    className="absolute inset-0 bg-brand-primary/5 rounded-lg opacity-0"
+                    className="absolute inset-0 bg-gradient-surface rounded-lg opacity-0"
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.2 }}
                   />
@@ -189,6 +190,9 @@ export default function Header() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="flex items-center gap-4"
           >
+            {/* Theme Toggle */}
+            <SimpleThemeToggle />
+            
             {/* Desktop CTA */}
             <div className="hidden md:block">
               <CTAButton 
@@ -245,7 +249,7 @@ export default function Header() {
                     w-full text-left px-4 py-3 rounded-xl font-medium
                     transition-all duration-200 transform-gpu
                     ${isActive 
-                      ? 'text-brand-primary bg-brand-primary/10 border border-brand-primary/20' 
+                      ? 'text-primary-900 bg-gradient-surface border border-primary-900/20' 
                       : 'text-text-muted hover:text-text-primary hover:bg-background-card'
                     }
                   `}

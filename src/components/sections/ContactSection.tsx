@@ -12,21 +12,21 @@ const contactInfo = [
     label: "Email",
     value: "contact.quantex@gmail.com",
     description: "For general inquiries and partnerships",
-    gradient: "from-brand-primary to-brand-accent"
+    gradient: "from-primary-600 to-primary-400"
   },
   {
     icon: MessageCircle,
     label: "Live Chat",
     value: "Available 24/7",
     description: "Instant support for urgent questions",
-    gradient: "from-brand-accent to-brand-secondary"
+    gradient: "from-primary-500 to-purple-500"
   },
   {
     icon: MapPin,
     label: "Location",
     value: "Global • Remote-first",
     description: "Serving clients worldwide",
-    gradient: "from-brand-secondary to-brand-primary"
+    gradient: "from-purple-500 to-primary-600"
   },
   {
     icon: Clock,

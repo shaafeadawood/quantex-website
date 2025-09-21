@@ -27,9 +27,9 @@ export default function CTAButton({
   };
 
   const variantClasses = {
-    primary: "bg-gradient-to-r from-brand-primary via-brand-accent to-brand-secondary text-white shadow-lg shadow-brand-primary/25",
-    secondary: "bg-background-card border border-border-accent text-brand-primary",
-    ghost: "text-brand-primary hover:bg-brand-primary/5",
+    primary: "bg-gradient-primary text-white shadow-primary",
+    secondary: "bg-background-card border border-border-subtle text-text-primary",
+    ghost: "text-primary-900 hover:bg-gradient-surface",
   };
 
   return (
@@ -42,7 +42,7 @@ export default function CTAButton({
       whileHover={{ 
         scale: 1.02,
         boxShadow: variant === "primary" 
-          ? "0 20px 25px -5px rgba(var(--brand-primary-rgb), 0.4), 0 10px 10px -5px rgba(var(--brand-primary-rgb), 0.04)"
+          ? "0 20px 25px -5px rgba(24, 0, 173, 0.4), 0 10px 10px -5px rgba(24, 0, 173, 0.04)"
           : "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
       }}
       whileTap={{ scale: 0.98 }}
@@ -57,8 +57,8 @@ export default function CTAButton({
         transition-all duration-300 transform-gpu
         ${sizeClasses[size]} ${variantClasses[variant]}
         ${loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}
-        ${variant === "primary" ? 'hover:shadow-xl hover:shadow-brand-primary/40' : ''}
-        ${variant === "secondary" ? 'hover:bg-brand-primary/10 hover:border-brand-primary/30' : ''}
+        ${variant === "primary" ? 'hover:shadow-primary-lg' : ''}
+        ${variant === "secondary" ? 'hover:bg-background-elevated hover:border-primary-900/30' : ''}
       `}
     >
       {/* Animated background layers */}
@@ -74,7 +74,7 @@ export default function CTAButton({
           
           {/* Gradient shift on hover */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-brand-secondary via-brand-primary to-brand-accent opacity-0"
+            className="absolute inset-0 bg-gradient-primary-hover opacity-0"
             whileHover={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
           />
